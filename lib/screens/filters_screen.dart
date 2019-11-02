@@ -4,7 +4,10 @@ import 'package:meals_app/widgets/main_drawer.dart';
 class FiltersScreen extends StatefulWidget {
   static final routedName = 'filters-screen';
 
-  const FiltersScreen({Key key}) : super(key: key);
+  final Function saveFilters;
+  final Map<String, bool> filters;
+
+  const FiltersScreen(this.filters, this.saveFilters);
 
   @override
   _FiltersScreenState createState() => _FiltersScreenState();
@@ -15,6 +18,15 @@ class _FiltersScreenState extends State<FiltersScreen> {
   bool _vegetarian = false;
   bool _vegan = false;
   bool _lactoseFree = false;
+
+  @override
+  void initState() { 
+    super.initState();
+    _glutenFree = widget.filters['gluten'];
+    _lactoseFree = widget.filters['lactose'];
+    _vegan = widget.filters['vegan'];
+    _vegetarian = widget.filters['vegetarian'];
+  }
 
   Widget _buildSwitchListTitle(title, subTitle, variable, updateFunction) {
     return SwitchListTile(
@@ -32,6 +44,20 @@ class _FiltersScreenState extends State<FiltersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Filters'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () {
+              final selectedFilters = {
+                'gluten': _glutenFree,
+                'lactose': _lactoseFree,
+                'vegan': _vegan,
+                'vegetarian': _vegetarian,
+              };
+              widget.saveFilters(selectedFilters);
+            },
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[
